@@ -19,7 +19,13 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("Test node!", "bold")
         node2 = TextNode("Text node?", "bold")
         self.assertNotEqual(node, node2)
-        print("Different nodes are not equal")
+        print("Nodes with different text are not equal")
+
+    def test_text_type_diff(self):
+        node = TextNode("Test node!", "normal")
+        node2 = TextNode("Test node!", "bold")
+        self.assertNotEqual(node, node2)
+        print("Nodes with different text types are not equal")
 
 
 if __name__ == "__main__":
