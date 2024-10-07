@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -18,6 +18,34 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode("p", "Hello!", None, {"class": "grass", "href": "chef"})
         node2 = HTMLNode("p", "Hello!", None, {"class": "grass", "href": "chef"})
         self.assertEqual(node.props_to_html(), node2.props_to_html())
+
+
+class TestParentNode(unittest.TestCase):
+    def test_init_with_no_child(self):
+        node = ParentNode(None, None, None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_simple_nesting(self):
+        leaf = LeafNode("Hi!", "b", {"class": "p-leaf"})
+        node = ParentNode("p", [leaf])
+        node2 = ParentNode("p", [leaf])
+        self.assertEqual(node.to_html(), node2.to_html())
+
+    def test_nesting(self):
+        leaf = LeafNode("A", "span", {"class": "test", "id": "A"})
+        leaf2 = LeafNode("B", "p", {"class": "best", "id": "B"})
+        leaf3 = LeafNode("C", "a", {"class": "rest", "id": "C", "href": "/"})
+        node = ParentNode("div", [leaf, leaf2, leaf3], {"class": "grass"})
+        node2 = ParentNode("section", [node], {"class": "mass"})
+        node3 = ParentNode("section", [node], {"class": "mass"})
+        self.assertEqual(node3.to_html(), node2.to_html())
+
+    def test_nesting_value_error(self):
+        node = ParentNode("div", [], {"class": "grass"})
+        node2 = ParentNode("section", [node], {"class": "mass"})
+        with self.assertRaises(ValueError):
+            node2.to_html()
 
 
 class TestLeafNode(unittest.TestCase):
