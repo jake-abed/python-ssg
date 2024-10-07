@@ -7,25 +7,21 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("This is a text node", "bold")
         node2 = TextNode("This is a text node", "bold")
         self.assertEqual(node, node2)
-        print("Standard nodes are equal")
 
     def test_url(self):
         node = TextNode("Text node!", "normal")
         node2 = TextNode("Text node!", "normal", None)
         self.assertEqual(node, node2)
-        print("TextNodes are equal with or without url provided")
 
     def test_text_diff(self):
         node = TextNode("Test node!", "bold")
         node2 = TextNode("Text node?", "bold")
         self.assertNotEqual(node, node2)
-        print("Nodes with different text are not equal")
 
     def test_text_type_diff(self):
         node = TextNode("Test node!", "normal")
         node2 = TextNode("Test node!", "bold")
         self.assertNotEqual(node, node2)
-        print("Nodes with different text types are not equal")
 
 
 if __name__ == "__main__":
