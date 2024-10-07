@@ -1,3 +1,16 @@
+from enum import Enum
+from htmlnode import LeafNode
+
+
+class TextNodeLeafType(Enum):
+    text = 1
+    bold = 2
+    italic = 3
+    code = 4
+    link = 5
+    image = 6
+
+
 class TextNode():
     def __init__(self, text, text_type, url=None):
         self.text = text
@@ -14,4 +27,21 @@ class TextNode():
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
+
+def text_node_to_html_node(text_node):
+    match text_node.text_type:
+        case TextNodeLeafType.text.name:
+            return LeafNode(text_node.text)
+        case TextNodeLeafType.bold.name:
+            return LeafNode(text_node.text, "b")
+        case TextNodeLeafType.italic.name:
+            return LeafNode(text_node.text, "i")
+        case TextNodeLeafType.code.name:
+            return LeafNode(text_node.text, "code")
+        case TextNodeLeafType.link.name:
+            return LeafNode(text_node.text, "a", {"href": text_node.url})
+        case TextNodeLeafType.image.name:
+            return LeafNode("", "img", {"src": text_node.url, "alt": text_node.text})
+        case _:
+            raise ValueError("TextNode must be one of the accepted LeafTypes")
 
