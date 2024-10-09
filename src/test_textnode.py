@@ -1,10 +1,10 @@
 import unittest
-from textnode import (TextNode,
-                      text_node_to_html_node,
-                      extract_markdown_links,
-                      extract_markdown_images,
-                      split_old_nodes_image,
-                      split_old_nodes_link)
+from textnode import TextNode, text_node_to_html_node
+from delimit import (extract_markdown_links,
+                     extract_markdown_images,
+                     split_old_nodes_image,
+                     split_old_nodes_link,
+                     text_to_textnodes)
 
 
 class TestTextNode(unittest.TestCase):
@@ -144,6 +144,44 @@ class TestTextNodesSplitLink(unittest.TestCase):
         result6 = TextNode(" in your shoe!", "text")
         results = [result1, result2, result3, result4, result5, result6]
         self.assertEqual(split_old_nodes_link([node, node2]), results)
+
+
+class TestTextToTextNodes(unittest.TestCase):
+    def test_small(self):
+        text = "Hello **my** friend."
+        nodes = text_to_textnodes(text)
+        expected1 = TextNode("Hello ", "text")
+        expected2 = TextNode("my", "bold")
+        expected3 = TextNode(" friend.", "text")
+        all_expected = [expected1, expected2, expected3]
+        self.assertEqual(nodes, all_expected)
+
+    def test_normal(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        expected = [
+                    TextNode("This is ", "text"),
+                    TextNode("text", "bold"),
+                    TextNode(" with an ", "text"),
+                    TextNode("italic", "italic"),
+                    TextNode(" word and a ", "text"),
+                    TextNode("code block", "code"),
+                    TextNode(" and an ", "text"),
+                    TextNode("obi wan image", "image", "https://i.imgur.com/fJRm4Vk.jpeg"),
+                    TextNode(" and a ", "text"),
+                    TextNode("link", "link", "https://boot.dev")
+                    ]
+        self.assertEqual(nodes, expected)
+
+    def test_opening_with_bold_ending_with_italic(self):
+        text = "**This** is *that*"
+        nodes = text_to_textnodes(text)
+        expected = [
+                    TextNode("This", "bold"),
+                    TextNode(" is ", "text"),
+                    TextNode("that", "italic")
+                    ]
+        self.assertEqual(nodes, expected)
 
 
 if __name__ == "__main__":

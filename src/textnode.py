@@ -1,6 +1,5 @@
 from enum import Enum
 from htmlnode import LeafNode
-from re import findall, split
 
 
 class TextNodeLeafType(Enum):
@@ -45,46 +44,4 @@ def text_node_to_html_node(text_node):
             return LeafNode("", "img", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise ValueError("TextNode must be one of the accepted LeafTypes")
-
-
-def split_old_nodes_image(old_nodes):
-    new_nodes = []
-    for node in old_nodes:
-        images = extract_markdown_images(node.text)
-        split_text = split(r"!\[[^\[\]]*\]\([^\(\)]*\)", node.text)
-        for text in split_text:
-            new_text_node = TextNode(text, node.text_type, node.url)
-            new_nodes.append(new_text_node)
-            if len(images) > 0:
-                image_data = images.pop(0)
-                new_image_node = TextNode(image_data[0], "image", image_data[1])
-                new_nodes.append(new_image_node)
-
-    return new_nodes
-
-
-def split_old_nodes_link(old_nodes):
-    new_nodes = []
-    for node in old_nodes:
-        links = extract_markdown_links(node.text)
-        split_text = split(r"(?<!!)\[[^\[\]]*\]\([^\(\)]*\)", node.text)
-        for text in split_text:
-            new_text_node = TextNode(text, node.text_type, node.url)
-            new_nodes.append(new_text_node)
-            if len(links) > 0:
-                link_data = links.pop(0)
-                new_link_node = TextNode(link_data[0], "link", link_data[1])
-                new_nodes.append(new_link_node)
-
-    return new_nodes
-
-
-def extract_markdown_images(text):
-    pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
-    return findall(pattern, text)
-
-
-def extract_markdown_links(text):
-    pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
-    return findall(pattern, text)
 
