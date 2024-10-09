@@ -1,5 +1,8 @@
 import unittest
-from textnode import TextNode, text_node_to_html_node
+from textnode import (TextNode,
+                      text_node_to_html_node,
+                      extract_markdown_links,
+                      extract_markdown_images)
 
 
 class TestTextNode(unittest.TestCase):
@@ -56,6 +59,38 @@ class TestTextNode(unittest.TestCase):
         html2 = text_node_to_html_node(node2)
         self.assertEqual(html.to_html(), html2.to_html())
 
+
+class TestExtractImage(unittest.TestCase):
+    def test_one_image(self):
+        text = "Text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)."
+        result = [("rick roll", "https://i.imgur.com/aKaOqIh.gif")]
+        self.assertEqual(extract_markdown_images(text), result)
+
+    def test_two_images(self):
+        text1 = "1. ![rick roll](https://i.imgur.com/aKaOqIh.gif)"
+        text2 = " 2. ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        text = text1 + text2
+        result = [
+                    ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+                    ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
+                 ]
+        self.assertEqual(extract_markdown_images(text), result)
+
+class TestExtractLink(unittest.TestCase):
+    def test_one_link(self):
+        text = "Text with [wtrmln chat](https://wtrmln.chat)."
+        result = [("wtrmln chat", "https://wtrmln.chat")]
+        self.assertEqual(extract_markdown_links(text), result)
+
+    def text_two_links(self):
+        text1 = "1. [walter](https://walter.melon) site"
+        text2 = "2. [wet](https://walter.wet) site"
+        text = text1 + text2
+        result = [
+                    ("walter", "https://walter.melon"),
+                    ("wet", "https://walter.wet")
+                 ]
+        self.assertEqual(extract_markdown_links(text), result)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from enum import Enum
 from htmlnode import LeafNode
+from re import findall
 
 
 class TextNodeLeafType(Enum):
@@ -44,4 +45,14 @@ def text_node_to_html_node(text_node):
             return LeafNode("", "img", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise ValueError("TextNode must be one of the accepted LeafTypes")
+
+
+def extract_markdown_images(text):
+    pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    return findall(pattern, text)
+
+def extract_markdown_links(text):
+    pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\((\)]*)\)"
+    return findall(pattern, text)
+
 
