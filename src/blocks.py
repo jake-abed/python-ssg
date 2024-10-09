@@ -37,7 +37,6 @@ def is_quote(block):
     for line in lines:
         if not line.lstrip().startswith(">"):
             all_quotes = False
-        print(line)
     return all_quotes
 
 
