@@ -2,7 +2,9 @@ import unittest
 from textnode import (TextNode,
                       text_node_to_html_node,
                       extract_markdown_links,
-                      extract_markdown_images)
+                      extract_markdown_images,
+                      split_old_nodes_image,
+                      split_old_nodes_link)
 
 
 class TestTextNode(unittest.TestCase):
@@ -76,6 +78,7 @@ class TestExtractImage(unittest.TestCase):
                  ]
         self.assertEqual(extract_markdown_images(text), result)
 
+
 class TestExtractLink(unittest.TestCase):
     def test_one_link(self):
         text = "Text with [wtrmln chat](https://wtrmln.chat)."
@@ -91,6 +94,56 @@ class TestExtractLink(unittest.TestCase):
                     ("wet", "https://walter.wet")
                  ]
         self.assertEqual(extract_markdown_links(text), result)
+
+
+class TestTextNodesSplitImage(unittest.TestCase):
+    def test_one_node(self):
+        text = "Text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)."
+        node = TextNode(text, "text")
+        result1 = TextNode("Text with a ", "text")
+        result2 = TextNode("rick roll", "image", "https://i.imgur.com/aKaOqIh.gif")
+        result3 = TextNode(".", "text")
+        results = [result1, result2, result3]
+        self.assertEqual(split_old_nodes_image([node]), results)
+
+    def test_two_nodes(self):
+        text = "Text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)."
+        text2 = "Shrek a doo ![grip](dip.com) in your shoe!"
+        node2 = TextNode(text2, "text")
+        node = TextNode(text, "text")
+        result1 = TextNode("Text with a ", "text")
+        result2 = TextNode("rick roll", "image", "https://i.imgur.com/aKaOqIh.gif")
+        result3 = TextNode(".", "text")
+        result4 = TextNode("Shrek a doo ", "text")
+        result5 = TextNode("grip", "image", "dip.com")
+        result6 = TextNode(" in your shoe!", "text")
+        results = [result1, result2, result3, result4, result5, result6]
+        self.assertEqual(split_old_nodes_image([node, node2]), results)
+
+
+class TestTextNodesSplitLink(unittest.TestCase):
+    def test_one_node(self):
+        text = "Text with a [rick roll](https://i.imgur.com/aKaOqIh.gif)."
+        node = TextNode(text, "text")
+        result1 = TextNode("Text with a ", "text")
+        result2 = TextNode("rick roll", "link", "https://i.imgur.com/aKaOqIh.gif")
+        result3 = TextNode(".", "text")
+        results = [result1, result2, result3]
+        self.assertEqual(split_old_nodes_link([node]), results)
+
+    def test_two_nodes(self):
+        text = "Text with a [rick roll](https://i.imgur.com/aKaOqIh.gif)."
+        text2 = "Shrek a doo [grip](dip.com) in your shoe!"
+        node2 = TextNode(text2, "text")
+        node = TextNode(text, "text")
+        result1 = TextNode("Text with a ", "text")
+        result2 = TextNode("rick roll", "link", "https://i.imgur.com/aKaOqIh.gif")
+        result3 = TextNode(".", "text")
+        result4 = TextNode("Shrek a doo ", "text")
+        result5 = TextNode("grip", "link", "dip.com")
+        result6 = TextNode(" in your shoe!", "text")
+        results = [result1, result2, result3, result4, result5, result6]
+        self.assertEqual(split_old_nodes_link([node, node2]), results)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from textnode import TextNode, extract_markdown_images
+from textnode import TextNode, split_old_nodes_link, split_old_nodes_image
 from htmlnode import HTMLNode, ParentNode, LeafNode
 
 def main():
@@ -10,7 +10,14 @@ def main():
     pnode2 = ParentNode("div", [pnode])
     print(textnode)
     print(pnode2.to_html())
-    print(extract_markdown_images(text))
+    node = TextNode(
+    "This is text with a link ![to boot dev](https://www.boot.dev) and ![to youtube](https://www.youtube.com/@bootdotdev)",
+    "text"
+)
+    new_nodes = split_old_nodes_image([node])
+
+    print(new_nodes)
+
 
 main()
 
