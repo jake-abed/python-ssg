@@ -26,6 +26,36 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
         self.assertEqual(blocks.markdown_to_blocks(text), expected)
 
 
+class TestBlockToBlockType(unittest.TestCase):
+    def test_to_heading_one(self):
+        block = "# Scooby dooby doo"
+        self.assertEqual(blocks.block_to_block_type(block), "heading")
+
+    def test_to_heading_three(self):
+        block = "### Scooby tooby tree"
+        self.assertEqual(blocks.block_to_block_type(block), "heading")
+
+    def test_heading_six(self):
+        block = "###### Devil"
+        self.assertEqual(blocks.block_to_block_type(block), "heading")
+
+    def test_code(self):
+        block = """``` l337 h4x0r
+            == === "trash" ```"""
+        self.assertEqual(blocks.block_to_block_type(block), "code")
+
+    def test_single_line_quote(self):
+        block = "> Something, someting..."
+        self.assertEqual(blocks.block_to_block_type(block), "quote")
+
+    def test_multi_line_quote(self):
+        block = """>Hi!
+            >You look happy!
+            >But are you?
+            > -Benjamin Button"""
+        self.assertEqual(blocks.block_to_block_type(block), "quote")
+
+
 if __name__ == "__main__":
     unittest.main()
 
