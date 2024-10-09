@@ -32,3 +32,7 @@ class DelimiterTest(unittest.TestCase):
         self.assertEqual(all_nodes[1].text_type, "bold")
         self.assertEqual(all_nodes[3].text_type, "italic")
 
+
+if __name__ == "__main__":
+    unittest.main()
+
