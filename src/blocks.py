@@ -35,9 +35,9 @@ def is_quote(block):
     lines = block.splitlines()
     all_quotes = True
     for line in lines:
-        print(line)
         if not line.lstrip().startswith(">"):
             all_quotes = False
+        print(line)
     return all_quotes
 
 
@@ -45,7 +45,7 @@ def is_ul(block):
     lines = block.splitlines()
     all_li = True
     for line in lines:
-        if not line.lstrip().startswith("* ") or not line.lstrip().startswith("- "):
+        if not (line.lstrip().startswith("* ") or line.lstrip().startswith("- ")):
             all_li = False
     return all_li
 

@@ -55,6 +55,42 @@ class TestBlockToBlockType(unittest.TestCase):
             > -Benjamin Button"""
         self.assertEqual(blocks.block_to_block_type(block), "quote")
 
+    def test_single_line_ul(self):
+        block = "- Well, well, well"
+        self.assertEqual(blocks.block_to_block_type(block), "unordered_list")
+
+    def test_multi_line_ul(self):
+        block = """- Well,
+        - Wells,
+        - Wellz..."""
+        self.assertEqual(blocks.block_to_block_type(block), "unordered_list")
+
+    def test_asterisk_ul(self):
+        block = "* Huh..."
+        self.assertEqual(blocks.block_to_block_type(block), "unordered_list")
+
+    def test_single_line_ol(self):
+        block = "1. One"
+        self.assertEqual(blocks.block_to_block_type(block), "ordered_list")
+
+    def test_multi_line_ol(self):
+        block = """1. One
+        2. Two
+        3. Three
+        4. Four"""
+        self.assertEqual(blocks.block_to_block_type(block), "ordered_list")
+
+    def test_wrong_num_ol(self):
+        block = "2. One"
+        self.assertEqual(blocks.block_to_block_type(block), "paragraph")
+
+    def test_wrong_num_mid_old(self):
+        block = """1. One
+        2. Two
+        5. Three
+        4. Four"""
+        self.assertEqual(blocks.block_to_block_type(block), "paragraph")
+
 
 if __name__ == "__main__":
     unittest.main()
