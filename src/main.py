@@ -6,7 +6,7 @@ import markdown
 def main():
     print("Starting SSG")
     copy_dir("./static", "./public")
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursively("./content", "template.html", "./public")
 
 
 def copy_dir(src_dir, target_dir):
@@ -46,6 +46,18 @@ def generate_page(src_path, template_path, target_path):
     target_file = open(target_path, mode='w')
     target_file.write(page)
     target_file.close()
+
+
+def generate_pages_recursively(content_dir, template_path, target_dir):
+    print(content_dir, template_path, target_dir)
+    contents = os.listdir(content_dir)
+    for content in contents:
+        content_path = os.path.join(content_dir, content)
+        target_path = os.path.join(target_dir, content)
+        if os.path.isfile(content_path):
+            generate_page(content_path, template_path, target_path.replace(".md", ".html"))
+        else:
+            generate_pages_recursively(content_path, template_path, target_path)
 
 
 main()
