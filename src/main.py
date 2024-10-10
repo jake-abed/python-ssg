@@ -1,38 +1,51 @@
-from textnode import TextNode
-from htmlnode import ParentNode, LeafNode
-from markdown import markdown_to_html_node
-import delimit
-import blocks
+import os
+import shutil
+import markdown
 
 
 def main():
-    textnode = TextNode("Hello there!", "normal")
-    l1 = LeafNode("Hello! ", "p")
-    l2 = LeafNode("Are you hungry?", "em")
-    pnode = ParentNode("span", [l1, l2])
-    pnode2 = ParentNode("div", [pnode])
-    print(textnode)
-    print(pnode2.to_html())
-
-    test_text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-    print(delimit.text_to_textnodes(test_text))
-
-    test_text2 =  """# This is a heading
-
-This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+    print("Starting SSG")
+    copy_dir("./static", "./public")
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 
-   
+def copy_dir(src_dir, target_dir):
+    print(f"Starting transfer of {src_dir} to {target_dir}...")
+    if not os.path.exists(src_dir):
+        raise NotADirectoryError(f"{src_dir} does not exist.")
+    if os.path.exists(target_dir):
+        shutil.rmtree(target_dir)
+    os.mkdir(target_dir)
+    src_contents = os.listdir(src_dir)
+    if len(src_contents) == 0:
+        print("Empty dir, nothing copied")
+        return
+    for item in src_contents:
+        item_path = os.path.join(src_dir, item)
+        if os.path.isfile(item_path):
+            shutil.copy(item_path, target_dir)
+        else:
+            new_target_dir = os.path.join(target_dir, item)
+            copy_dir(item_path, new_target_dir)
+    print(f"Completed transfer from {src_dir} to {target_dir}!")
+    return
 
-* This is the first list item in a list block
-* This is a list item
-* This is another list item
 
-* This is yet another list item"""
-    print(blocks.markdown_to_blocks(test_text2))
-
-    print(markdown_to_html_node("# Hello!"))
-    print(markdown_to_html_node(test_text2).to_html())
+def generate_page(src_path, template_path, target_path):
+    print(f"Generating page from {src_path} to {target_path} using {template_path}")
+    md_file = open(src_path)
+    md = md_file.read()
+    template_file = open(template_path)
+    template = template_file.read()
+    title = markdown.extract_title(md)
+    content = markdown.markdown_to_html_node(md).to_html()
+    page = template.replace("{{ Title }}", title).replace("{{ Content }}", content)
+    target_dir = os.path.dirname(target_path)
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+    target_file = open(target_path, mode='w')
+    target_file.write(page)
+    target_file.close()
 
 
 main()

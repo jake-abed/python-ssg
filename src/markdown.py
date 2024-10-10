@@ -1,6 +1,6 @@
 import blocks
 import delimit
-from htmlnode import ParentNode
+from htmlnode import ParentNode, LeafNode
 from textnode import text_node_to_html_node
 
 
@@ -12,6 +12,18 @@ def markdown_to_html_node(markdown):
         if html_node is not None:
             converted_blocks.append(html_node)
     return ParentNode("div", converted_blocks)
+
+
+def extract_title(markdown):
+    all_blocks = blocks.markdown_to_blocks(markdown)
+    h1 = None
+    for block in all_blocks:
+        if block.lstrip().startswith("# "):
+            h1 = block.lstrip().lstrip("# ")
+            break
+    if h1 is None:
+        raise Exception("Markdown must contain an H1 to make a page.")
+    return h1
 
 
 def unknown_block_to_html_node(block):
@@ -47,12 +59,12 @@ def code_block_to_html_node(block):
 
 def quote_block_to_html_node(block):
     lines = block.splitlines()
-    children = []
+    quote = ""
     for line in lines:
-        deformatted = line[1:]
-        line_children = text_nodes_to_html_nodes(deformatted)
-        children.append(ParentNode("p", line_children))
-    return ParentNode("blockquote", children)
+        deformatted = line[1:].lstrip()
+        quote = quote + deformatted
+    ln = LeafNode(quote)
+    return ParentNode("blockquote", [ln])
 
 
 def ul_block_to_html_node(block):

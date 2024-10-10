@@ -1,6 +1,6 @@
 import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from markdown import markdown_to_html_node
+from markdown import markdown_to_html_node, extract_title
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -131,6 +131,32 @@ Tolkien's Middle-earth is a realm of breathtaking diversity and realism, brought
         self.assertIn("<h2>The Art of <b>", html)
         self.assertIn("<div><img", html)
         self.assertEqual(html.count("<li>"), 6)
+
+
+class TestExtractH1FromMd(unittest.TestCase):
+    def test_simple_md(self):
+        md = "# An H1"
+        self.assertEqual(extract_title(md), "An H1")
+
+    def test_no_h1_simple(self):
+        md = ">Dog"
+        with self.assertRaises(Exception):
+            extract_title(md)
+
+    def test_deep_h1(self):
+        md = """[Start]("/")
+
+        - A Thing
+        - Another Thing
+        - Sonic?
+
+        Some **text** to read.
+
+        ## H2
+
+        # H1"""
+
+        self.assertEqual(extract_title(md), "H1")
 
 
 if __name__ == "__main__":
