@@ -29,6 +29,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     else:
         return new_nodes
 
+
 def text_to_textnodes(text):
     node = TextNode(text, "text")
     nodes = split_old_nodes_image([node])

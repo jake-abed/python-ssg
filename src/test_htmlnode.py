@@ -1,5 +1,6 @@
 import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from markdown import markdown_to_html_node
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -63,6 +64,16 @@ class TestLeafNode(unittest.TestCase):
         node = LeafNode("Hello!")
         node2 = LeafNode("Hello!")
         self.assertEqual(node.to_html(), node2.to_html())
+
+
+class TestMarkDownToHTMLNodes(unittest.TestCase):
+    def test_simplest_case(self):
+        md = "# Hi!"
+        node = markdown_to_html_node(md)
+        ln = LeafNode("Hi!")
+        pn = ParentNode("h1", [ln])
+        rn = ParentNode("div", [pn])
+        self.assertEqual(node.to_html(), rn.to_html())
 
 
 if __name__ == "__main__":

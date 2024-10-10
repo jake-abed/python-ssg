@@ -55,4 +55,3 @@ class LeafNode(HTMLNode):
             closing_tag = f"</{self.tag}>"
             return opening_tag + self.value + closing_tag
 
-

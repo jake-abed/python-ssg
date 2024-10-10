@@ -1,5 +1,6 @@
 from textnode import TextNode
 from htmlnode import ParentNode, LeafNode
+from markdown import markdown_to_html_node
 import delimit
 import blocks
 
@@ -29,6 +30,9 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
 
 * This is yet another list item"""
     print(blocks.markdown_to_blocks(test_text2))
+
+    print(markdown_to_html_node("# Hello!"))
+    print(markdown_to_html_node(test_text2).to_html())
 
 
 main()
