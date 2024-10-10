@@ -41,7 +41,7 @@ def heading_to_html_node(block):
 
 
 def code_block_to_html_node(block):
-    text = block.lsplit("```").rstrip("```")
+    text = block.lstrip("```").rstrip("```")
     return ParentNode("code", text_nodes_to_html_nodes(text))
 
 
@@ -78,7 +78,7 @@ def ol_block_to_html_node(block):
 def paragraph_block_to_html_node(block):
     text = block.replace("\n", "<br>")
     children = text_nodes_to_html_nodes(text)
-    return ParentNode("p", children)
+    return ParentNode("div", children)
 
 
 def text_nodes_to_html_nodes(text):
